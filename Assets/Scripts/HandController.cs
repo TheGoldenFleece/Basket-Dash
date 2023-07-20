@@ -15,9 +15,6 @@ public class HandController : MonoBehaviour
 
     private Vector3 _default;
     private string _putFruitTrigger = "PutFruit";
-
-    [SerializeField] private Transform _radiusChecker;
-
     private void Awake()
     {
         _targetToSet = null;
@@ -47,7 +44,7 @@ public class HandController : MonoBehaviour
 
     private bool IsTargetInRadius(Transform target)
     {
-        if (Vector3.Distance(target.position, _radiusChecker.position) > .2f) return false;
+        if (Vector3.Distance(target.position, RadiusChecker.Instance.transform.position) > RadiusChecker.Instance.Radius) return false;
 
         return true;
     }
@@ -102,28 +99,8 @@ public class HandController : MonoBehaviour
     IEnumerator PutFruitInBasket()
     {
         _animator.SetTrigger(_putFruitTrigger);
-        yield return new WaitUntil(() => IsAnimationOver(_animator, "PutInTheBasket"));
+        yield return new WaitUntil(() => AnimationChecker.Instance.IsAnimationOver(_animator, "PutInTheBasket"));
 
         yield break;
-    }
-
-    public bool IsAnimationOver(Animator animator, string clipName)
-    {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        try
-        {
-            // Перевірка, чи кліп закінчився
-            if (stateInfo.IsName(clipName) && stateInfo.normalizedTime >= 1.0f)
-                return true;
-
-            //return false;
-        }
-        catch (NullReferenceException e)
-        {
-            Debug.Log(e);
-        }
-
-        return false;
     }
 }
